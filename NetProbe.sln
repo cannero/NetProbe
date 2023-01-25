@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E6841304-3BE
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NetProbe.Infra", "src\NetProbe.Infra\NetProbe.Infra.fsproj", "{CD27E493-4FFC-4FF3-99D1-654F085A0F25}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A4D32113-E549-4A46-A237-557800DBA3B3}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NetProbe.Infra.Tests", "tests\NetProbe.Infra.Tests\NetProbe.Infra.Tests.fsproj", "{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,8 +24,13 @@ Global
 		{CD27E493-4FFC-4FF3-99D1-654F085A0F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD27E493-4FFC-4FF3-99D1-654F085A0F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD27E493-4FFC-4FF3-99D1-654F085A0F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CD27E493-4FFC-4FF3-99D1-654F085A0F25} = {E6841304-3BE1-4008-B408-AF40EF48D08C}
+		{0CFA199E-1F1F-4F0C-8173-9C1E1FD6BC8F} = {A4D32113-E549-4A46-A237-557800DBA3B3}
 	EndGlobalSection
 EndGlobal

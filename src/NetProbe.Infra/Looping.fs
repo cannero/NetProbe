@@ -6,20 +6,22 @@ open System.Threading
 // async must be used, task is not tail recursive
 
 module loopf =
-    let rec loop () = async {
-        printfn "in async"
-        do! Async.Sleep 500
-        return! loop () }
+    let looptime = 500
+
+    let rec loop (fn) = async {
+        fn()
+        do! Async.Sleep looptime
+        return! loop (fn) }
 
 
 type Looper() =
     let mutable _cts = None
-    member _.start () = //async {
+    member this.start (fn) = //async {
+            this.stop()
             let cts = new CancellationTokenSource()
             _cts <- Some(cts)
             //loopf.loop ()
-            printfn "starting"
-            Async.Start(loopf.loop (), cts.Token)
+            Async.Start(loopf.loop (fn), cts.Token)
             //}
 
     member _.stop () =
@@ -27,7 +29,6 @@ type Looper() =
             | None -> ()
             | Some(token) -> token.Cancel()
         _cts <- None
-        printfn "stop"
 
 // module call = 
 //     let callit () = async {

@@ -4,7 +4,7 @@ open classtest
 open Looping
 
 let looper = Looper ()
-looper.start ()
+looper.start (fun () -> printfn "in loop")
 Thread.Sleep(3000)
 looper.stop ()
 
