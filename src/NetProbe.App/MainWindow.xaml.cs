@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace NetProbe.App
 {
@@ -23,6 +24,8 @@ namespace NetProbe.App
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = Ioc.Default.GetRequiredService<NotifyIconViewModel>();
         }
     }
 }
