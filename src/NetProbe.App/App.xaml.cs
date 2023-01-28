@@ -10,6 +10,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using H.NotifyIcon;
+using NetProbe.Core.Interfaces;
+using NetProbe.Core.Services;
 using Serilog;
 
 namespace NetProbe.App;
@@ -47,6 +49,8 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         SetupIoc();
 
+        ExitIfStartupNotPossible();
+
         WeakReferenceMessenger.Default.Register<OpenWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<HideWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<ExitAppMessage>(this);
@@ -65,12 +69,28 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         Ioc.Default.ConfigureServices(
             new ServiceCollection()
                 .AddSingleton<NotifyIconViewModel>() //Services
+                .AddTransient<IStartupChecker, StartupChecker>()
         .BuildServiceProvider());
+    }
+
+    private void ExitIfStartupNotPossible()
+    {
+        var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
+        if (startupChecker.CanStart)
+        {
+            Log.Information("starting");
+        }
+        else
+        {
+            Log.Fatal("startup not possible");
+            MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
+            ExitApp();
+        }
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        notifyIcon?.Dispose(); //the icon would clean up automatically, but this is cleaner
+        notifyIcon?.Dispose();
         base.OnExit(e);
     }
 
@@ -89,8 +109,12 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     public void Receive(ExitAppMessage message)
     {
+        ExitApp();
+    }
+
+    private void ExitApp()
+    {
         Log.Debug("exit");
         Shutdown();
     }
 }
-

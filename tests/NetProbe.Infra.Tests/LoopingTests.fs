@@ -1,4 +1,4 @@
-module Tests
+module LoopingTests
 
 open System
 open System.Threading

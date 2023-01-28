@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Interfaces/IStartupChecker.fs" />
+    <Compile Include="Services/StartupChecker.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
 

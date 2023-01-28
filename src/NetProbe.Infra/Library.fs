@@ -1,19 +1,4 @@
-﻿open System.Threading
-open classtest
-//open Pinging
-open Looping
-
-let looper = Looper ()
-looper.start (fun () -> printfn "in loop")
-Thread.Sleep(3000)
-looper.stop ()
-
-// let cts = new CancellationTokenSource()
-// Async.Start(call.callit (), cts.Token)
-// Thread.Sleep(3000)
-// cts.Cancel()
-
-
+﻿namespace NetProbe.Infra
 //let clt = new Someclass ()
 //printfn "%A" (clt.getName ())
 
@@ -41,3 +26,7 @@ looper.stop ()
 // get settings
 
 // export files
+
+// json config
+
+// https://stackoverflow.com/questions/19147/what-is-the-correct-way-to-create-a-single-instance-wpf-application?rq=1
