@@ -97,11 +97,11 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
     {
         Ioc.Default.ConfigureServices(
             new ServiceCollection()
+                .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
                 .AddSingleton<NotifyIconViewModel>()
                 .AddTransient<IRegistryReader, RegistryReader>()
                 .AddTransient<IStartupChecker, StartupChecker>()
-
-        .BuildServiceProvider());
+                .BuildServiceProvider());
     }
 
     private bool ExitAsStartupNotPossible()
