@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -22,20 +23,39 @@ namespace NetProbe.App;
 public partial class App : Application, IRecipient<OpenWindowMessage>,
  IRecipient<HideWindowMessage>, IRecipient<ExitAppMessage>
 {
+    private Mutex appMutex = new Mutex(true, "NetProbe99887766");
+    private bool appMutexAquired = false;
     private TaskbarIcon? notifyIcon;
 
     public App()
     {
+        if (appMutex.WaitOne(TimeSpan.Zero, true))
+        {
+            appMutexAquired = true;
+        }
+
+        var logfileName = appMutexAquired switch
+        {
+            true => "NetProbe.log",
+            false => "NetProbeAlreadyRunning.log",
+        };
+
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.Console()
-            .WriteTo.File("logs/NetProbe.log", rollingInterval: RollingInterval.Day)
+            .WriteTo.File($"logs/{logfileName}", rollingInterval: RollingInterval.Day)
             .CreateLogger();
-        Log.Information("Starting");
+        Log.Information("==============Starting==============");
         Log.Information($"{System.Reflection.Assembly.GetExecutingAssembly().Location}");
         Log.Information($"{System.IO.Path.GetFullPath(".")}");
 
         this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+
+        if (!appMutexAquired)
+        {
+            Log.Information("app already running, exiting");
+            Environment.Exit(0);
+        }
     }
 
     void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -45,11 +65,19 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     protected override void OnStartup(StartupEventArgs e)
     {
+        if (!appMutexAquired)
+        {
+            return;
+        }
+
         base.OnStartup(e);
 
         SetupIoc();
 
-        ExitIfStartupNotPossible();
+        if (ExitAsStartupNotPossible())
+        {
+            return;
+        }
 
         WeakReferenceMessenger.Default.Register<OpenWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<HideWindowMessage>(this);
@@ -73,24 +101,31 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         .BuildServiceProvider());
     }
 
-    private void ExitIfStartupNotPossible()
+    private bool ExitAsStartupNotPossible()
     {
         var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
-        if (startupChecker.CanStart)
+        if (startupChecker.CanStart())
         {
             Log.Information("starting");
+            return false;
         }
         else
         {
             Log.Fatal("startup not possible");
             MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
             ExitApp();
+            return true;
         }
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
-        notifyIcon?.Dispose();
+        if (appMutexAquired)
+        {
+            notifyIcon?.Dispose();
+            appMutex.ReleaseMutex();
+        }
+
         base.OnExit(e);
     }
 

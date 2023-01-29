@@ -7,8 +7,7 @@
 
 // expose to c# https://gist.github.com/swlaschin/2d3e75a2ff4a87112c19309c86e0dd41
 
-// read registry
-// can start check
+// can start check -> function?
 // tcp/icmp statistics
 
 // run in background backgroundTask
@@ -29,4 +28,5 @@
 
 // json config
 
-// https://stackoverflow.com/questions/19147/what-is-the-correct-way-to-create-a-single-instance-wpf-application?rq=1
+// send message if already running
+// https://learn.microsoft.com/en-us/dotnet/standard/io/how-to-use-anonymous-pipes-for-local-interprocess-communication

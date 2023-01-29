@@ -4,5 +4,5 @@ open NetProbe.Core.Interfaces
 
 type StartupChecker ()=
     interface IStartupChecker with
-        member _.CanStart  =
+        member _.CanStart ()  =
             true
