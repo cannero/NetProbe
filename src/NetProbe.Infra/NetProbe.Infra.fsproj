@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="RegistryReader.fs" />
+    <Compile Include="IO/RegistryReader.fs" />
     <Compile Include="Looping.fs" />
     <Compile Include="classtest.fs" />
     <Compile Include="Pinging.fs" />

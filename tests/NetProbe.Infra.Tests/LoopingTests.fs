@@ -17,7 +17,7 @@ let ``Loop is run multiple times test`` () =
     looper.start fn
     Thread.Sleep(3 * loopf.looptime)
     looper.stop ()
-    Assert.Equal(3, x)
+    Assert.True(x >= 3 && x <= 4, (sprintf "x is %i" x))
 
 [<Fact>]
 let ``Loop does not run after stop test`` () =

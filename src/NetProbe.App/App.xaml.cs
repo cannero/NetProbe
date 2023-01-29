@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using H.NotifyIcon;
 using NetProbe.Core.Interfaces;
 using NetProbe.Core.Services;
+using NetProbe.Infra.IO;
 using Serilog;
 
 namespace NetProbe.App;
@@ -96,15 +97,17 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
     {
         Ioc.Default.ConfigureServices(
             new ServiceCollection()
-                .AddSingleton<NotifyIconViewModel>() //Services
+                .AddSingleton<NotifyIconViewModel>()
+                .AddTransient<IRegistryReader, RegistryReader>()
                 .AddTransient<IStartupChecker, StartupChecker>()
+
         .BuildServiceProvider());
     }
 
     private bool ExitAsStartupNotPossible()
     {
         var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
-        if (startupChecker.CanStart())
+        if (startupChecker.CanStart("not existing", "not existing", "c:/tmp/config.xml"))
         {
             Log.Information("starting");
             return false;
@@ -120,13 +123,19 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     protected override void OnExit(ExitEventArgs e)
     {
-        if (appMutexAquired)
+        CloseResources();
+        base.OnExit(e);
+    }
+
+    private void CloseResources()
+    {
+        if (!appMutexAquired)
         {
-            notifyIcon?.Dispose();
-            appMutex.ReleaseMutex();
+            return;
         }
 
-        base.OnExit(e);
+        notifyIcon?.Dispose();
+        appMutex.ReleaseMutex();
     }
 
     public void Receive(OpenWindowMessage message)
