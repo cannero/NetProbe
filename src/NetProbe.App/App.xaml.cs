@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,20 +36,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
             appMutexAquired = true;
         }
 
-        var logfileName = appMutexAquired switch
-        {
-            true => "NetProbe.log",
-            false => "NetProbeAlreadyRunning.log",
-        };
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.Console()
-            .WriteTo.File($"logs/{logfileName}", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
-        Log.Information("==============Starting==============");
-        Log.Information($"{System.Reflection.Assembly.GetExecutingAssembly().Location}");
-        Log.Information($"{System.IO.Path.GetFullPath(".")}");
+        SetupSerilog();
 
         this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
@@ -59,7 +47,25 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         }
     }
 
-    void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    private void SetupSerilog()
+    {
+        var logfileName = appMutexAquired switch
+        {
+            true => "NetProbe.log",
+            false => "NetProbeAlreadyRunning.log",
+        };
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Verbose()
+            .WriteTo.Console()
+            .WriteTo.File($"logs/{logfileName}", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+        Log.Information("==============Starting==============");
+        Log.Information($"{System.Reflection.Assembly.GetExecutingAssembly().Location}");
+        Log.Information($"{System.IO.Path.GetFullPath(".")}");
+    }
+
+    private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
         Log.Fatal("Unhandled: {exception}", e.Exception);
     }

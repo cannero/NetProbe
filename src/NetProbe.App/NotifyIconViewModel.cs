@@ -1,9 +1,10 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using H.NotifyIcon;
-using Serilog;
 
 namespace NetProbe.App;
 
@@ -12,6 +13,13 @@ namespace NetProbe.App;
 /// </summary>
 public partial class NotifyIconViewModel : ObservableRecipient
 {
+    private readonly ILogger<NotifyIconViewModel> logger;
+
+    public NotifyIconViewModel()
+    {
+        logger = Ioc.Default.GetRequiredService<ILogger<NotifyIconViewModel>>();
+    }
+
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ShowWindowCommand))]
     public bool canExecuteShowWindow = false;
@@ -37,7 +45,7 @@ public partial class NotifyIconViewModel : ObservableRecipient
     [RelayCommand(CanExecute = nameof(CanExecuteHideWindow))]
     public void HideWindow()
     {
-        Log.Debug("hiding");
+        logger.LogDebug("hiding");
         Messenger.Send<HideWindowMessage>();
         WindowHidden();
     }
@@ -45,7 +53,7 @@ public partial class NotifyIconViewModel : ObservableRecipient
     [RelayCommand]
     public void WindowHidden()
     {
-        Log.Debug("hidden");
+        logger.LogDebug("hidden");
         CanExecuteShowWindow = true;
         CanExecuteHideWindow = false;
     }

@@ -10,6 +10,7 @@
     <Compile Include="Interfaces/IAvailabilityService.fs" />
     <Compile Include="Interfaces/IRegistryReader.fs" />
     <Compile Include="Interfaces/IStartupChecker.fs" />
+    <Compile Include="Services/AvailabilityService.fs" />
     <Compile Include="Services/StartupChecker.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
