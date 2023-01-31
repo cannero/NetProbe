@@ -2,6 +2,9 @@ Net Probe
 =========
 ***Check availability of a `MySql` host***
 
+# Overview
+The application starts in the system tray and runs multiple *probes*.
+
 # Resources
 - https://github.com/HavenDV/H.NotifyIcon
 - https://awkwardcoder.blogspot.com/2012/03/showing-message-box-from-viewmodel-in.html

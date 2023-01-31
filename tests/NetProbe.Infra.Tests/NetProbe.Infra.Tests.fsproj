@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="LoggerRecorder.fs" />
+    <Compile Include="PingProbeTests.fs" />
     <Compile Include="RegistryReaderTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

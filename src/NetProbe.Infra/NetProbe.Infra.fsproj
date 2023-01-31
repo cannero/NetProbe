@@ -5,10 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="IO/PingProbe.fs" />
     <Compile Include="IO/RegistryReader.fs" />
     <Compile Include="Looping.fs" />
     <Compile Include="classtest.fs" />
-    <Compile Include="Pinging.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
 

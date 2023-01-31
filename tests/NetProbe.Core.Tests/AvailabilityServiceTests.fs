@@ -12,7 +12,7 @@ module mock =
     let probe () =
         x <- 0
         { new IProbe with
-              member _.test printAlways =
+              member _.Test printAlways =
                   x <- x + 1}
 
 let createTarget () =

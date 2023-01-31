@@ -3,7 +3,7 @@ namespace NetProbe.Infra.IO
 open Microsoft.Win32
 open NetProbe.Core.Interfaces
 
-type RegistryReader ()=
+type RegistryReader () =
     interface IRegistryReader with
         member _.GetLocalKey key valuename  =
             let rkLocalMachine = Registry.LocalMachine;

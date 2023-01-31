@@ -8,7 +8,7 @@ module looping =
     let looptime = 500
 
     let rec loop probes = async {
-        List.iter (fun (probe : IProbe) -> probe.test false) probes
+        List.iter (fun (probe : IProbe) -> probe.Test false) probes
         do! Async.Sleep looptime
         return! loop probes}
 
