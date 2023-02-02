@@ -7,7 +7,15 @@ open NetProbe.Infra.Tests
 
 let createTarget host =
     let recorder = LoggerRecorder<PingProbe> ()
-    (PingProbe (recorder, [host]) :> IProbe, recorder)
+    let configProvider() = {
+        new IProbeConfigurationProvider with
+            member _.ConfigurationExists() =
+                true
+            member _.Get() =
+                { Hosts = [host]; MySqlUser = "user"; MySqlPassword = "pwd"; }
+    }
+
+    (PingProbe (recorder, configProvider()) :> IProbe, recorder)
 
 let allLogs (recorder : LoggerRecorder<PingProbe>) =
     recorder.getLogs () |> List.fold (fun t l -> t + "; " + l) ""

@@ -28,11 +28,12 @@ module private pinging =
             | ex -> logger.LogError(ex, "pinging failed not with PingException")
 
 
-type PingProbe (logger : ILogger<PingProbe>, hosts : string list) =
+type PingProbe (logger : ILogger<PingProbe>, configProvider : IProbeConfigurationProvider) =
     interface IProbe with
         member _.Test printAlways =
             logger.LogDebug("pinging")
-            List.iter (fun h -> pinging.runPing logger h) hosts
+            let config = configProvider.Get()
+            Seq.iter (fun h -> pinging.runPing logger h) config.Hosts
 
 
         // let replies =

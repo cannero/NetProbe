@@ -1,4 +1,7 @@
 ﻿namespace NetProbe.Infra
+
+// move configProvider to availabilityService, pass config in probe.Test
+
 //let clt = new Someclass ()
 //printfn "%A" (clt.getName ())
 

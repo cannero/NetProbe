@@ -1,7 +1,7 @@
 namespace NetProbe.Core.ValueObjects
 
 type ProbeConfiguration = {
-     Host: string
+     Hosts: string seq
      MySqlUser: string
      MySqlPassword: string
 }

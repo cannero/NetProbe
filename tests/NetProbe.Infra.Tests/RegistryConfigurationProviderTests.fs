@@ -100,6 +100,6 @@ let ``host is read from fallback path test`` () =
 
     let config = target.Get()
 
-    Assert.Equal(host, config.Host)
+    Assert.Equal(host, config.Hosts |> Seq.head)
 
     files.deleteConfigFile fallback

@@ -53,6 +53,6 @@ type RegistryConfigurationProvider (logger, regConfig, registryReader) =
         member _.Get () =
             let path = read.filepath logger registryReader regConfig
             let host = read.getHost logger path
-            { Host = host.Value; MySqlUser = "root"; MySqlPassword = ""; }
+            { Hosts = [host.Value]; MySqlUser = "root"; MySqlPassword = ""; }
 
 

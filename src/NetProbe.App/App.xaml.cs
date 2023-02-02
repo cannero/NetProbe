@@ -96,6 +96,13 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         notifyIcon.DataContext = Ioc.Default.GetRequiredService<NotifyIconViewModel>();
         notifyIcon.ForceCreate();
 
+        var availService = Ioc.Default.GetRequiredService<IAvailabilityService>();
+        foreach (var probe in Ioc.Default.GetServices<IProbe>())
+        {
+            availService.AddProbe(probe);
+        }
+        availService.Start();
+
         // todo: check how this is done in the correct way
         Receive(new OpenWindowMessage());
     }
@@ -110,8 +117,10 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                                   Key = "not existing key",
                                   ValueName = "not existing value",
                                   FallbackPath = "C:/tmp/netprobeconfig.xml",})
-                .AddTransient<IRegistryReader, RegistryReader>()
-                .AddTransient<IProbeConfigurationProvider, RegistryConfigurationProvider>()
+                .AddSingleton<IRegistryReader, RegistryReader>()
+                .AddSingleton<IProbeConfigurationProvider, RegistryConfigurationProvider>()
+                .AddSingleton<IAvailabilityService, AvailabilityService>()
+                .AddSingleton<IProbe, PingProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
                 .BuildServiceProvider());
     }
@@ -148,6 +157,9 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         notifyIcon?.Dispose();
         appMutex.ReleaseMutex();
+
+        var availService = Ioc.Default.GetRequiredService<IAvailabilityService>();
+        availService.Stop();
     }
 
     public void Receive(OpenWindowMessage message)
