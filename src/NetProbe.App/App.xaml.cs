@@ -27,21 +27,21 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
  IRecipient<HideWindowMessage>, IRecipient<ExitAppMessage>
 {
     private Mutex appMutex = new Mutex(true, "NetProbe99887766");
-    private bool appMutexAquired = false;
+    private bool appAlreadyRunning = true;
     private TaskbarIcon? notifyIcon;
 
     public App()
     {
         if (appMutex.WaitOne(TimeSpan.Zero, true))
         {
-            appMutexAquired = true;
+            appAlreadyRunning = false;
         }
 
         SetupSerilog();
 
         this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
-        if (!appMutexAquired)
+        if (appAlreadyRunning)
         {
             Log.Information("app already running, exiting");
             Environment.Exit(0);
@@ -50,10 +50,10 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     private void SetupSerilog()
     {
-        var logfileName = appMutexAquired switch
+        var logfileName = appAlreadyRunning switch
         {
-            true => "NetProbe.log",
-            false => "NetProbeAlreadyRunning.log",
+            false => "NetProbe.log",
+            true => "NetProbeAlreadyRunning.log",
         };
 
         Log.Logger = new LoggerConfiguration()
@@ -73,7 +73,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     protected override void OnStartup(StartupEventArgs e)
     {
-        if (!appMutexAquired)
+        if (appAlreadyRunning)
         {
             return;
         }
@@ -141,7 +141,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     private void CloseResources()
     {
-        if (!appMutexAquired)
+        if (appAlreadyRunning)
         {
             return;
         }
