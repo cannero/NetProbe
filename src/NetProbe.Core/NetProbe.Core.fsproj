@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ValueObjects/ProbeConfiguration.fs" />
     <Compile Include="Interfaces/IProbe.fs" />
+    <Compile Include="Interfaces/IProbeConfigurationProvider.fs" />
     <Compile Include="Interfaces/IAvailabilityService.fs" />
     <Compile Include="Interfaces/IRegistryReader.fs" />
     <Compile Include="Interfaces/IStartupChecker.fs" />

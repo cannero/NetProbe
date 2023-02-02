@@ -33,3 +33,10 @@ type PingProbe (logger : ILogger<PingProbe>, hosts : string list) =
         member _.Test printAlways =
             logger.LogDebug("pinging")
             List.iter (fun h -> pinging.runPing logger h) hosts
+
+
+        // let replies =
+        //     [|"127.0.0.1" ; "google.de"|]
+        //     |> Array.map(fun host -> host, ping.Send(host, 1000, buffer, pingOptions))
+
+        // replies |> Array.iter(fun (h, r) -> printfn "for %s %A %A" h r.Status r.RoundtripTime)

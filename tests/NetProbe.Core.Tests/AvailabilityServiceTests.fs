@@ -1,6 +1,5 @@
 module AvailabilityServiceTests
 
-open System
 open System.Threading
 open Microsoft.Extensions.Logging.Abstractions
 open Xunit
@@ -12,7 +11,7 @@ module mock =
     let probe () =
         x <- 0
         { new IProbe with
-              member _.Test printAlways =
+              member _.Test _printAlways =
                   x <- x + 1}
 
 let createTarget () =

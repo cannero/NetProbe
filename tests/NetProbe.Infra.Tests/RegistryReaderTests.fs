@@ -1,6 +1,5 @@
 module RegistryTests
 
-open System
 open Xunit
 open NetProbe.Core.Interfaces
 open NetProbe.Infra.IO
