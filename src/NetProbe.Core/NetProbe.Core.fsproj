@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ValueObjects/RegistryConfiguration.fs" />
     <Compile Include="ValueObjects/ProbeConfiguration.fs" />
     <Compile Include="Interfaces/IProbe.fs" />
     <Compile Include="Interfaces/IProbeConfigurationProvider.fs" />

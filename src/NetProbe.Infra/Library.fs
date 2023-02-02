@@ -30,3 +30,5 @@
 
 // send message if already running
 // https://learn.microsoft.com/en-us/dotnet/standard/io/how-to-use-anonymous-pipes-for-local-interprocess-communication
+
+// https://stackoverflow.com/questions/59909207/cannot-add-appsettings-json-inside-wpf-project-net-core-3-0?utm_source=pocket_saves

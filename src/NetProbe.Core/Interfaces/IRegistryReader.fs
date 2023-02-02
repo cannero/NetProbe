@@ -1,4 +1,6 @@
 namespace NetProbe.Core.Interfaces
 
+open NetProbe.Core.ValueObjects
+
 type IRegistryReader =
-    abstract member GetLocalKey : key:string -> valuename:string -> string option
+    abstract member GetLocalKey : config: RegistryConfiguration -> string option

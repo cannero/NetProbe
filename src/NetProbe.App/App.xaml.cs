@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using H.NotifyIcon;
 using NetProbe.Core.Interfaces;
 using NetProbe.Core.Services;
+using NetProbe.Core.ValueObjects;
 using NetProbe.Infra.IO;
 using Serilog;
 
@@ -105,7 +106,12 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
             new ServiceCollection()
                 .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
                 .AddSingleton<NotifyIconViewModel>()
+                .AddSingleton(new RegistryConfiguration{
+                                  Key = "not existing key",
+                                  ValueName = "not existing value",
+                                  FallbackPath = "C:/tmp/netprobeconfig.xml",})
                 .AddTransient<IRegistryReader, RegistryReader>()
+                .AddTransient<IProbeConfigurationProvider, RegistryConfigurationProvider>()
                 .AddTransient<IStartupChecker, StartupChecker>()
                 .BuildServiceProvider());
     }
@@ -113,7 +119,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
     private bool ExitAsStartupNotPossible()
     {
         var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
-        if (startupChecker.CanStart("not existing", "not existing", "c:/tmp/config.xml"))
+        if (startupChecker.CanStart())
         {
             Log.Information("starting");
             return false;
