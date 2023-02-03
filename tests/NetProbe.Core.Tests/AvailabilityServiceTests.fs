@@ -11,11 +11,19 @@ module mock =
     let probe () =
         x <- 0
         { new IProbe with
-              member _.Test _printAlways =
+              member _.Test _config _printAlways =
                   x <- x + 1}
 
 let createTarget () =
-    let target = AvailabilityService (new NullLogger<AvailabilityService>())
+    let configProvider() = {
+        new IProbeConfigurationProvider with
+            member _.ConfigurationExists() =
+                true
+            member _.Get() =
+                { Hosts = ["somehost"]; MySqlUser = "user"; MySqlPassword = "pwd"; }
+    }
+
+    let target = AvailabilityService (new NullLogger<AvailabilityService>(), configProvider())
     target :> IAvailabilityService
 
 [<Fact>]

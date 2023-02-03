@@ -8,8 +8,6 @@
     <Compile Include="IO/RegistryConfigurationProvider.fs" />
     <Compile Include="IO/PingProbe.fs" />
     <Compile Include="IO/RegistryReader.fs" />
-    <Compile Include="Looping.fs" />
-    <Compile Include="classtest.fs" />
     <Compile Include="Library.fs" />
   </ItemGroup>
 

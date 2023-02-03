@@ -7,12 +7,16 @@ open NetProbe.Core.Interfaces
 module looping =
     let looptime = 500
 
-    let rec loop probes = async {
-        List.iter (fun (probe : IProbe) -> probe.Test false) probes
+    let rec loop probes config = async {
+        List.iter (fun (probe : IProbe) -> probe.Test config false) probes
         do! Async.Sleep looptime
-        return! loop probes}
+        return! loop probes config }
 
-type AvailabilityService (logger: ILogger<AvailabilityService>)=
+type AvailabilityService
+    (
+        logger: ILogger<AvailabilityService>,
+        configProvider : IProbeConfigurationProvider
+    ) =
     let mutable cts = None
     let mutable probes = []
 
@@ -20,7 +24,8 @@ type AvailabilityService (logger: ILogger<AvailabilityService>)=
         this.stop ()
         let newCts = new CancellationTokenSource()
         cts <- Some(newCts)
-        Async.Start (looping.loop probes, newCts.Token)
+        let config = configProvider.Get()
+        Async.Start (looping.loop probes config, newCts.Token)
 
     member _.stop () =
         match cts with

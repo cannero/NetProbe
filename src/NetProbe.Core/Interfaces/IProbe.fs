@@ -1,4 +1,6 @@
 namespace NetProbe.Core.Interfaces
 
+open NetProbe.Core.ValueObjects
+
 type IProbe =
-    abstract member Test: printAlways: bool -> unit
+    abstract member Test: config: ProbeConfiguration -> printAlways: bool -> unit
