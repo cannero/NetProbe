@@ -58,12 +58,13 @@ type RegistryConfigurationProvider (logger, regConfig, registryReader) =
             | false -> false
             | true ->
                 match read.getHostAndPort logger path with
-                | Some _, Some _ -> true
+                | Some _, Some p when p <> 0u -> true
                 | _ -> false
 
         member _.Get () =
             let path = read.filepath logger registryReader regConfig
             let host, port = read.getHostAndPort logger path
-            { HostsAndPorts = [{ Host = host.Value; Port = port.Value }]; MySqlUser = "root"; MySqlPassword = ""; }
+            { HostsAndPorts = [{ Host = host.Value; Port = port.Value }];
+              MySqlUser = "root"; MySqlPassword = ""; }
 
 

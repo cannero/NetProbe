@@ -19,13 +19,16 @@ module private pinging =
         try
             ping.Send(host, 1000, buffer, pingOptions)
             |> printPingReply logger
+            true
         with
             | :? PingException as ex ->
                 logger.LogError("Ping failed: {message}", ex.Message)
                 if ex.InnerException <> null then
                     logger.LogError("{message}", ex.InnerException.Message)
-            
-            | ex -> logger.LogError(ex, "pinging failed not with PingException")
+                false
+            | ex ->
+                logger.LogError(ex, "pinging failed not with PingException")
+                false
 
 
 type PingProbe (logger : ILogger<PingProbe>) =
@@ -34,7 +37,9 @@ type PingProbe (logger : ILogger<PingProbe>) =
             logger.LogDebug("pinging")
             config.HostsAndPorts
             |> Seq.map (fun hostPort -> hostPort.Host)
-            |> Seq.iter (fun h -> pinging.runPing logger h)
+            |> Seq.map (fun h -> pinging.runPing logger h)
+            |> Seq.exists ((=) false)
+            |> not
 
 
         // let replies =

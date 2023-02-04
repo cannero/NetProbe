@@ -104,6 +104,18 @@ let ``Configuration exists returns true test`` () =
     files.deleteConfigFile fallback
 
 [<Fact>]
+let ``host but wrong port returns false test`` () =
+    let fallback = "C:/tmp/providertest.xml"
+    files.createConfigFile fallback "the host" "no uint port"
+    let target = target "no reg key" "no value" fallback
+
+    let doesExist = target.ConfigurationExists()
+
+    Assert.False(doesExist)
+
+    files.deleteConfigFile fallback
+
+[<Fact>]
 let ``host is read from fallback path test`` () =
     let fallback = "C:/tmp/providertest.xml"
     let host = "The Host"

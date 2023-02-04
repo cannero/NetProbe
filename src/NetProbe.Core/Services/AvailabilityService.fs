@@ -7,8 +7,9 @@ open NetProbe.Core.Interfaces
 module looping =
     let looptime = 500
 
-    let rec loop probes config = async {
-        List.iter (fun (probe : IProbe) -> probe.Test config false) probes
+    let rec loop (probes: IProbe seq) config = async {
+        for probe in probes do
+            probe.Test config false |> ignore
         do! Async.Sleep looptime
         return! loop probes config }
 

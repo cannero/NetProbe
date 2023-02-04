@@ -20,13 +20,17 @@ let allLogs (recorder : LoggerRecorder<PingProbe>) =
 [<Fact>]
 let ``ping localhost is successful test`` () =
     let target, recorder = createTarget
-    runTest target "127.0.0.1"
-    let pingSuccessful = recorder.getLogs () |> List.exists (fun l -> l.Contains("Success"))
-    Assert.True(pingSuccessful, allLogs recorder)
+    let result = runTest target "127.0.0.1"
+    let logPingSuccessful = recorder.getLogs () |> List.exists (fun l -> l.Contains("Success"))
+    Assert.True(logPingSuccessful, allLogs recorder)
+    Assert.True(result)
 
 [<Fact>]
 let ``ping not exitsting host logs error test`` () =
     let target, recorder = createTarget
-    runTest target "UsdfjThisDoesNotExist.com"
-    let pingFailed = recorder.getLogs () |> List.exists (fun l -> l.Contains("No such host is known"))
-    Assert.True(pingFailed, allLogs recorder)
+    let result = runTest target "UsdfjThisDoesNotExist.com"
+    let logPingFailed =
+        recorder.getLogs ()
+        |> List.exists (fun l -> l.Contains("No such host is known"))
+    Assert.True(logPingFailed, allLogs recorder)
+    Assert.False(result)

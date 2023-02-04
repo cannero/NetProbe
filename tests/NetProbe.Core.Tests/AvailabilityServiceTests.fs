@@ -12,7 +12,8 @@ module mock =
         x <- 0
         { new IProbe with
               member _.Test _config _printAlways =
-                  x <- x + 1}
+                  x <- x + 1
+                  true }
 
 let createTarget () =
     let configProvider() = {
