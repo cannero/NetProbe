@@ -61,7 +61,11 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
             .WriteTo.Console()
             .WriteTo.File($"logs/{logfileName}", rollingInterval: RollingInterval.Day)
             .CreateLogger();
-        Log.Information("==============Starting==============");
+#if DEBUG
+        Log.Information("==============Starting Debug==============");
+#else
+        Log.Information("==============Starting Release============");
+#endif
         Log.Information($"{System.Reflection.Assembly.GetExecutingAssembly().Location}");
         Log.Information($"{System.IO.Path.GetFullPath(".")}");
     }
