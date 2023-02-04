@@ -28,13 +28,25 @@ module read =
             else
                 Some ele
 
-        XDocument.Parse content
-        |> getEle "config"
-        |> Option.map (getEle "host")
-        |> Option.flatten
-        |> Option.map (fun ele -> ele.Value.Trim())
+        let doc = XDocument.Parse content
+        let host =
+            doc
+            |> getEle "config"
+            |> Option.map (getEle "host")
+            |> Option.flatten
+            |> Option.map (fun ele -> ele.Value.Trim())
 
-    let getHost logger path =
+        let port =
+            doc
+            |> getEle "config"
+            |> Option.map (getEle "port")
+            |> Option.flatten
+            |> Option.map (fun ele -> ele.Value.Trim())
+            |> Option.map (fun p -> try uint p with _ -> 0u)
+
+        host, port
+
+    let getHostAndPort logger path =
         let content = File.ReadAllText path
         parseConfigFile logger content
 
@@ -45,13 +57,13 @@ type RegistryConfigurationProvider (logger, regConfig, registryReader) =
             match File.Exists path with
             | false -> false
             | true ->
-                match read.getHost logger path with
-                | None -> false
-                | Some _ -> true
+                match read.getHostAndPort logger path with
+                | Some _, Some _ -> true
+                | _ -> false
 
         member _.Get () =
             let path = read.filepath logger registryReader regConfig
-            let host = read.getHost logger path
-            { Hosts = [host.Value]; MySqlUser = "root"; MySqlPassword = ""; }
+            let host, port = read.getHostAndPort logger path
+            { HostsAndPorts = [{ Host = host.Value; Port = port.Value }]; MySqlUser = "root"; MySqlPassword = ""; }
 
 

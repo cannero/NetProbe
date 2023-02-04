@@ -32,7 +32,9 @@ type PingProbe (logger : ILogger<PingProbe>) =
     interface IProbe with
         member _.Test config printAlways =
             logger.LogDebug("pinging")
-            Seq.iter (fun h -> pinging.runPing logger h) config.Hosts
+            config.HostsAndPorts
+            |> Seq.map (fun hostPort -> hostPort.Host)
+            |> Seq.iter (fun h -> pinging.runPing logger h)
 
 
         // let replies =

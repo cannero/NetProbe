@@ -20,7 +20,7 @@ let createTarget () =
             member _.ConfigurationExists() =
                 true
             member _.Get() =
-                { Hosts = ["somehost"]; MySqlUser = "user"; MySqlPassword = "pwd"; }
+                { HostsAndPorts = [{Host = "somehost"; Port = 1234u;}]; MySqlUser = "user"; MySqlPassword = "pwd"; }
     }
 
     let target = AvailabilityService (new NullLogger<AvailabilityService>(), configProvider())

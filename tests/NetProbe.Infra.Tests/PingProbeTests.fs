@@ -11,7 +11,7 @@ let createTarget =
     PingProbe recorder :> IProbe, recorder
 
 let runTest (target: IProbe) host =
-    let config = { Hosts = [host]; MySqlUser = "user"; MySqlPassword = "pwd"; }
+    let config = { HostsAndPorts = [{Host = host; Port = 3290u}]; MySqlUser = "user"; MySqlPassword = "pwd"; }
     target.Test config false
 
 let allLogs (recorder : LoggerRecorder<PingProbe>) =
