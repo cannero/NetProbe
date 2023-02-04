@@ -1,7 +1,5 @@
 ﻿namespace NetProbe.Infra
 
-// move configProvider to availabilityService, pass config in probe.Test
-
 // expose to c# https://gist.github.com/swlaschin/2d3e75a2ff4a87112c19309c86e0dd41
 
 // can start check -> function?

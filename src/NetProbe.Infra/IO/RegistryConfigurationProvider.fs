@@ -1,4 +1,6 @@
 namespace NetProbe.Infra.IO
+// implicit 'string' to type 'XName'
+#nowarn "3391"
 
 open System.IO
 open System.Xml.Linq
@@ -18,22 +20,19 @@ module read =
         | Some(filepath) -> filepath
 
     let parseConfigFile (logger: ILogger<'a>) content =
-        let doc = XDocument.Parse content
-        let outer = doc.Element("config")
-        match outer with
-        | null ->
-            logger.LogError("no config element found in '{content}'", content)
-            None
-        | _ ->
-            let hostele = outer.Element("host")
-            match hostele with
-            | null ->
-                logger.LogError("no host element found in '{content}'", content)
+        let getEle name (parent: XContainer)  =
+            let ele = parent.Element name
+            if (isNull ele) then
+                logger.LogError("no '{name}' element found in '{content}'", name, content)
                 None
-            | _ ->
-                let host = hostele.Value.Trim()
-                logger.LogInformation("using host '{host}'", host)
-                Some host
+            else
+                Some ele
+
+        XDocument.Parse content
+        |> getEle "config"
+        |> Option.map (getEle "host")
+        |> Option.flatten
+        |> Option.map (fun ele -> ele.Value.Trim())
 
     let getHost logger path =
         let content = File.ReadAllText path
