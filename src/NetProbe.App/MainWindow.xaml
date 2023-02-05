@@ -20,7 +20,8 @@
                 Height="Auto" Background="White">
 
       <Button Width="Auto" Height="35"
-              Content="Export Data" Margin="5,5,5,5" />
+              Content="Export Data" Margin="5,5,5,5"
+              Command="{Binding ExportAllLogsCommand}" />
       <Button Width="Auto" Height="35"
               Content="Hide Window" Margin="5,5,5,5"
               Command="{Binding HideWindowCommand}" />

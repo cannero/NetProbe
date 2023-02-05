@@ -35,4 +35,14 @@ public partial class MainWindowViewModel : ObservableRecipient
     {
         Messenger.Send<ExitAppMessage>();
     }
+
+    [RelayCommand]
+    public async void ExportAllLogs()
+    {
+        var result = await Messenger.Send<SaveExportToPathRequestMessage>();
+        if (!result.Canceled)
+        {
+            logger.LogInformation("received " + result.Path);
+        }
+    }
 }
