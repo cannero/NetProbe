@@ -125,6 +125,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .AddSingleton<IProbeConfigurationProvider, RegistryConfigurationProvider>()
                 .AddSingleton<IAvailabilityService, AvailabilityService>()
                 .AddSingleton<IProbe, PingProbe>()
+                .AddSingleton<IProbe, MySqlConnectionProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
                 .BuildServiceProvider());
     }

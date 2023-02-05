@@ -1,4 +1,4 @@
-namespace NetProbe.Infra.Tests
+module LoggerRecorder
 
 open System
 open Microsoft.Extensions.Logging
@@ -15,3 +15,9 @@ type LoggerRecorder<'a>() =
             true
         member _.Log<'s>(logLevel, eventId, state : 's, ex, formatter) =
             logs <- (formatter.Invoke(state,ex)) :: logs
+
+let allLogs (recorder: LoggerRecorder<'a>) =
+    recorder.getLogs () |> List.fold (fun t l -> t + "; " + l) ""
+
+let loggerContains (recorder: LoggerRecorder<'a>) (text: string) =
+    recorder.getLogs () |> List.exists (fun l -> l.Contains(text))

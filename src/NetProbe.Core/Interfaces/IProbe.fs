@@ -3,4 +3,5 @@ namespace NetProbe.Core.Interfaces
 open NetProbe.Core.ValueObjects
 
 type IProbe =
-    abstract member Test: config: ProbeConfiguration -> printAlways: bool -> bool
+    /// Returns true if the Test was successful
+    abstract member Test: config: ProbeConfiguration -> logInfo: bool -> bool

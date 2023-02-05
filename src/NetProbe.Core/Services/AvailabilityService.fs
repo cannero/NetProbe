@@ -7,11 +7,15 @@ open NetProbe.Core.Interfaces
 module looping =
     let looptime = 500
 
-    let rec loop (probes: IProbe seq) config = async {
+    let rec loop (probes: IProbe seq) config loopCount = async {
         for probe in probes do
-            probe.Test config false |> ignore
+            probe.Test config (loopCount % 2000 = 0) |> ignore
         do! Async.Sleep looptime
-        return! loop probes config }
+        let newLoopCount = if loopCount > 100_000 then
+                               0
+                           else
+                               loopCount + 1
+        return! loop probes config (newLoopCount)}
 
 type AvailabilityService
     (
@@ -26,7 +30,7 @@ type AvailabilityService
         let newCts = new CancellationTokenSource()
         cts <- Some(newCts)
         let config = configProvider.Get()
-        Async.Start (looping.loop probes config, newCts.Token)
+        Async.Start (looping.loop probes config 0, newCts.Token)
 
     member _.stop () =
         match cts with

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="IO/RegistryConfigurationProvider.fs" />
+    <Compile Include="IO/MySqlConnectionProbe.fs" />
     <Compile Include="IO/PingProbe.fs" />
     <Compile Include="IO/RegistryReader.fs" />
     <Compile Include="Library.fs" />
@@ -13,6 +14,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetProbe.Core\NetProbe.Core.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.29" />
   </ItemGroup>
 
 </Project>

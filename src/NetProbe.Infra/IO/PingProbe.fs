@@ -8,17 +8,18 @@ module private pinging =
     open System.Net.NetworkInformation
     open System.Text
 
-    let printPingReply (logger : ILogger) (r : PingReply) =
-        logger.LogInformation("status: {status}, roundtrip time {time}", r.Status, r.RoundtripTime)
+    let printPingReply (logger : ILogger) logInfo (r : PingReply) =
+        if logInfo then
+            logger.LogInformation("status: {status}, roundtrip time {time}", r.Status, r.RoundtripTime)
 
-    let runPing (logger : ILogger) (host : string) =
+    let runPing (logger : ILogger) (host : string) logInfo =
         let ping = new Ping()
         let pingOptions = PingOptions()
         let buffer = Array.create 30 '-' |> Encoding.ASCII.GetBytes
 
         try
             ping.Send(host, 1000, buffer, pingOptions)
-            |> printPingReply logger
+            |> printPingReply logger logInfo
             true
         with
             | :? PingException as ex ->
@@ -33,11 +34,10 @@ module private pinging =
 
 type PingProbe (logger : ILogger<PingProbe>) =
     interface IProbe with
-        member _.Test config printAlways =
-            logger.LogDebug("pinging")
+        member _.Test config logInfo =
             config.HostsAndPorts
             |> Seq.map (fun hostPort -> hostPort.Host)
-            |> Seq.map (fun h -> pinging.runPing logger h)
+            |> Seq.map (fun h -> pinging.runPing logger h logInfo)
             |> Seq.exists ((=) false)
             |> not
 

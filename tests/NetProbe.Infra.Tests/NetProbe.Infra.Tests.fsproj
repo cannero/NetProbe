@@ -10,6 +10,8 @@
   <ItemGroup>
     <Compile Include="RegistryConfigurationProviderTests.fs" />
     <Compile Include="LoggerRecorder.fs" />
+    <Compile Include="ProbeHelpers.fs" />
+    <Compile Include="MySqlConnectionProbeTests.fs" />
     <Compile Include="PingProbeTests.fs" />
     <Compile Include="RegistryReaderTests.fs" />
     <Compile Include="Program.fs" />
