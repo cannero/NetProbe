@@ -11,4 +11,4 @@ let createIProbeAndLogger<'p> createType =
 let runTest (target: IProbe) host =
     let config = { HostsAndPorts = [{Host = host; Port = 3306u}];
                    MySqlUser = "user"; MySqlPassword = "pwd"; }
-    target.Test config false
+    target.Test config true

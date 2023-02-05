@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ZipperTests.fs" />
     <Compile Include="RegistryConfigurationProviderTests.fs" />
     <Compile Include="LoggerRecorder.fs" />
     <Compile Include="ProbeHelpers.fs" />
