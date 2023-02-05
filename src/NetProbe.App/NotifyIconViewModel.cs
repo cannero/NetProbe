@@ -3,8 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Extensions.Logging;
 using H.NotifyIcon;
+using Microsoft.Extensions.Logging;
+using NetProbe.App.Messages;
 
 namespace NetProbe.App;
 

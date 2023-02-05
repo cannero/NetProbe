@@ -1,4 +1,4 @@
-namespace NetProbe.App;
+namespace NetProbe.App.Messages;
 
 public sealed class HideWindowMessage
 {
