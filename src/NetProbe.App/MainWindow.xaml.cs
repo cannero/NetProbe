@@ -25,7 +25,7 @@ namespace NetProbe.App
         {
             InitializeComponent();
 
-            DataContext = Ioc.Default.GetRequiredService<NotifyIconViewModel>();
+            DataContext = Ioc.Default.GetRequiredService<MainWindowViewModel>();
         }
     }
 }

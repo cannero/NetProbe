@@ -9,9 +9,10 @@ using H.NotifyIcon;
 namespace NetProbe.App;
 
 /// <summary>
-/// Provides bindable properties and commands for the NotifyIcon.
+/// Provides bindable properties and commands for the NotifyIcon and
+/// the shown/hidden state for the MainWindow.
 /// </summary>
-public partial class NotifyIconViewModel : ObservableRecipient
+public partial class NotifyIconViewModel : ObservableRecipient, IMainWindowOpenAndCloser
 {
     private readonly ILogger<NotifyIconViewModel> logger;
 
@@ -47,11 +48,15 @@ public partial class NotifyIconViewModel : ObservableRecipient
     {
         logger.LogDebug("hiding");
         Messenger.Send<HideWindowMessage>();
-        WindowHidden();
+        WindowClosed();
     }
 
+    /// <summary>
+    /// Use this command for the Close Button.
+    /// The function updates the state but does not send a message to close the window.
+    /// </summary>
     [RelayCommand]
-    public void WindowHidden()
+    public void WindowClosed()
     {
         logger.LogDebug("hidden");
         CanExecuteShowWindow = true;

@@ -108,6 +108,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         availService.Start();
 
         // todo: check how this is done in the correct way
+        // only open in case of error
         Receive(new OpenWindowMessage());
     }
 
@@ -117,6 +118,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
             new ServiceCollection()
                 .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
                 .AddSingleton<NotifyIconViewModel>()
+                .AddSingleton<IMainWindowOpenAndCloser>(s => s.GetService<NotifyIconViewModel>()!)
                 .AddSingleton(new RegistryConfiguration{
                                   Key = "not existing key",
                                   ValueName = "not existing value",
@@ -127,6 +129,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .AddSingleton<IProbe, PingProbe>()
                 .AddSingleton<IProbe, MySqlConnectionProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
+                .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider());
     }
 

@@ -10,7 +10,7 @@
         Height="450" Width="800">
   <i:Interaction.Triggers>
     <i:EventTrigger EventName="Closing">
-      <i:InvokeCommandAction Command="{Binding WindowHiddenCommand}" />
+      <i:InvokeCommandAction Command="{Binding WindowClosedCommand}" />
     </i:EventTrigger>
   </i:Interaction.Triggers>
   <DockPanel Width="Auto"
