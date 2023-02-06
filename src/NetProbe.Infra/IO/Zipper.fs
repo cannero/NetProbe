@@ -18,7 +18,7 @@ module filehandling =
 
 type Zipper (logger : ILogger<Zipper>, dataPath) =
     interface IZipper with
-        member this.ZipIt outputPath =
+        member _.ZipIt outputPath =
             try
                 (dataPath, outputPath)
                 ||> filehandling.checkForExisting

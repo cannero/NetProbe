@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
 using NetProbe.App.Messages;
+using NetProbe.Core.Interfaces;
 
 namespace NetProbe.App;
 
@@ -11,11 +12,23 @@ public partial class MainWindowViewModel : ObservableRecipient
 {
     private readonly ILogger<MainWindowViewModel> logger;
     private readonly IMainWindowOpenAndCloser mainWindowCloser;
+    private readonly IZipper zipper;
+    private readonly bool canStart = false;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ILogger<MainWindowViewModel> theLogger,
+                               IMainWindowOpenAndCloser windowCloser, IZipper theZipper,
+                               IStartupChecker startupChecker)
     {
-        logger = Ioc.Default.GetRequiredService<ILogger<MainWindowViewModel>>();
-        mainWindowCloser = Ioc.Default.GetRequiredService<IMainWindowOpenAndCloser>();
+        (logger, mainWindowCloser, zipper) = (theLogger, windowCloser, theZipper);
+        if (startupChecker.CanStart())
+        {
+            canStart = true;
+            Message = "Running";
+        }
+        else
+        {
+            Message = "Cannot start";
+        }
     }
 
     [RelayCommand]
@@ -39,10 +52,25 @@ public partial class MainWindowViewModel : ObservableRecipient
     [RelayCommand]
     public async void ExportAllLogs()
     {
-        var result = await Messenger.Send<SaveExportToPathRequestMessage>();
-        if (!result.Canceled)
+        Message = canStart switch
         {
-            logger.LogInformation("received " + result.Path);
+            true => "Running",
+            false => "Cannot Start",
+        };
+
+        var result = await Messenger.Send<SaveExportToPathRequestMessage>();
+        if (result.Canceled)
+        {
+            return;
+        }
+
+        var successful = zipper.ZipIt(result.Path);
+        if (!successful)
+        {
+            Message = "Data export failed";
         }
     }
+
+    [ObservableProperty]
+    private string? message;
 }

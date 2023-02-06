@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NetProbe.App.Messages;
 using NetProbe.Core.Interfaces;
 using NetProbe.Core.Services;
@@ -25,6 +26,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
     private Mutex appMutex = new Mutex(true, "NetProbe99887766");
     private bool appAlreadyRunning = true;
     private TaskbarIcon? notifyIcon;
+    private const string logpath = "logs/";
 
     public App()
     {
@@ -55,7 +57,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Verbose()
             .WriteTo.Console()
-            .WriteTo.File($"logs/{logfileName}", rollingInterval: RollingInterval.Day)
+            .WriteTo.File($"{logpath}{logfileName}", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 #if DEBUG
         Log.Information("==============Starting Debug==============");
@@ -82,11 +84,6 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         SetupIoc();
 
-        if (ExitAsStartupNotPossible())
-        {
-            return;
-        }
-
         WeakReferenceMessenger.Default.Register<OpenWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<HideWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<ExitAppMessage>(this);
@@ -96,13 +93,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         notifyIcon.DataContext = Ioc.Default.GetRequiredService<NotifyIconViewModel>();
         notifyIcon.ForceCreate();
 
-        var availService = Ioc.Default.GetRequiredService<IAvailabilityService>();
-        foreach (var probe in Ioc.Default.GetServices<IProbe>())
-        {
-            availService.AddProbe(probe);
-        }
-        availService.Start();
-
+        StartProbesIfPossible();
         // todo: check how this is done in the correct way
         // only open in case of error
         Receive(new OpenWindowMessage());
@@ -125,24 +116,28 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .AddSingleton<IProbe, PingProbe>()
                 .AddSingleton<IProbe, MySqlConnectionProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
+                .AddTransient<IZipper>(p => new Zipper(p.GetService<ILogger<Zipper>>(), logpath))
                 .AddTransient<MainWindowViewModel>()
-                .BuildServiceProvider());
+                .BuildServiceProvider(validateScopes: true));
     }
 
-    private bool ExitAsStartupNotPossible()
+    private void StartProbesIfPossible()
     {
         var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
         if (startupChecker.CanStart())
         {
             Log.Information("starting");
-            return false;
+            var availService = Ioc.Default.GetRequiredService<IAvailabilityService>();
+            foreach (var probe in Ioc.Default.GetServices<IProbe>())
+            {
+                availService.AddProbe(probe);
+            }
+            availService.Start();
         }
         else
         {
             Log.Fatal("startup not possible");
-            MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
-            ExitApp();
-            return true;
+            //MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
