@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Configuration;
+using System.IO;
 using System.Threading;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetProbe.App.Messages;
@@ -107,6 +110,8 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     private void SetupIoc()
     {
+        var configuration = BuildConfiguration();
+
         Ioc.Default.ConfigureServices(
             new ServiceCollection()
                 .AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
@@ -127,6 +132,17 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider(validateScopes: true));
     }
+
+    private IConfiguration BuildConfiguration()
+    {
+        var startpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location) ?? "./";
+
+        var builder = new ConfigurationBuilder()
+         .SetBasePath(startpath)
+         .AddJsonFile("configuration/appsettings.json", optional: false, reloadOnChange: true);
+
+        return builder.Build();
+     }
 
     private bool EverythingOkStartingProbes()
     {
