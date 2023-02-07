@@ -6,6 +6,7 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using H.NotifyIcon;
+using H.NotifyIcon.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NetProbe.App.Messages;
@@ -94,8 +95,12 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         notifyIcon.DataContext = Ioc.Default.GetRequiredService<NotifyIconViewModel>();
         notifyIcon.ForceCreate();
 
-        StartProbesIfPossible();
-
+        if (EverythingOkStartingProbes())
+        {
+            notifyIcon.ShowNotification("NetProbe", "The appliation is running in the background",
+                NotificationIcon.None, customIcon: null, largeIcon: false, sound: false,
+                respectQuietTime: false, realtime: false, TimeSpan.FromSeconds(4));
+        }
         // only open in case of error
         OpenMainWindow();
     }
@@ -123,7 +128,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .BuildServiceProvider(validateScopes: true));
     }
 
-    private void StartProbesIfPossible()
+    private bool EverythingOkStartingProbes()
     {
         var startupChecker = Ioc.Default.GetRequiredService<IStartupChecker>();
         if (startupChecker.CanStart())
@@ -135,11 +140,13 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 availService.AddProbe(probe);
             }
             availService.Start();
+            return true;
         }
         else
         {
             Log.Fatal("startup not possible");
             //MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
+            return false;
         }
     }
 
