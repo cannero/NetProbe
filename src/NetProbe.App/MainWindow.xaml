@@ -16,6 +16,12 @@
   </i:Interaction.Triggers>
   <DockPanel Width="Auto"
              Height="Auto" LastChildFill="True">
+    <StackPanel Width="Auto" Height="40" DockPanel.Dock="Top">
+      <Border BorderThickness="0,0,0,1" BorderBrush="Black">
+        <Label Content="{Binding Version}" HorizontalAlignment="Right" />
+      </Border>
+    </StackPanel>
+
     <!--Left Main Content area-->
     <StackPanel Width="200"
                 Height="Auto" Background="White">

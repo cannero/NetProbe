@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -68,6 +69,14 @@ public partial class MainWindowViewModel : ObservableRecipient
         {
             state = ModelState.ZipFailed;
             UpdateState();
+        }
+    }
+
+    public string Version
+    {
+        get
+        {
+            return "Version: " + Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString();
         }
     }
 
