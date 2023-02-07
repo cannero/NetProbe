@@ -12,6 +12,7 @@ using NetProbe.App.Messages;
 using NetProbe.Core.Interfaces;
 using NetProbe.Core.Services;
 using NetProbe.Core.ValueObjects;
+using NetProbe.Infra.Dummys;
 using NetProbe.Infra.IO;
 using Serilog;
 
@@ -94,9 +95,9 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         notifyIcon.ForceCreate();
 
         StartProbesIfPossible();
-        // todo: check how this is done in the correct way
+
         // only open in case of error
-        Receive(new OpenWindowMessage());
+        OpenMainWindow();
     }
 
     private void SetupIoc()
@@ -117,6 +118,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
                 .AddSingleton<IProbe, MySqlConnectionProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
                 .AddTransient<IZipper>(p => new Zipper(p.GetService<ILogger<Zipper>>(), logpath))
+                //.AddTransient<IZipper, FailingZipper>()
                 .AddTransient<MainWindowViewModel>()
                 .BuildServiceProvider(validateScopes: true));
     }
@@ -161,11 +163,16 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         availService.Stop();
     }
 
+    private void OpenMainWindow()
+    {
+        MainWindow ??= new MainWindow();
+        MainWindow.Show(disableEfficiencyMode: true);
+    }
+
     public void Receive(OpenWindowMessage message)
     {
         Log.Debug("open window");
-        MainWindow ??= new MainWindow();
-        MainWindow.Show(disableEfficiencyMode: true);
+        OpenMainWindow();
     }
 
     public void Receive(HideWindowMessage message)

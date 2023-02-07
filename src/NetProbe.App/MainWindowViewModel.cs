@@ -1,3 +1,4 @@
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -13,22 +14,20 @@ public partial class MainWindowViewModel : ObservableRecipient
     private readonly ILogger<MainWindowViewModel> logger;
     private readonly IMainWindowOpenAndCloser mainWindowCloser;
     private readonly IZipper zipper;
-    private readonly bool canStart = false;
+    private readonly IStartupChecker startupChecker;
+    private ModelState state = ModelState.CannotStart;
 
     public MainWindowViewModel(ILogger<MainWindowViewModel> theLogger,
                                IMainWindowOpenAndCloser windowCloser, IZipper theZipper,
-                               IStartupChecker startupChecker)
+                               IStartupChecker startupCheck)
     {
-        (logger, mainWindowCloser, zipper) = (theLogger, windowCloser, theZipper);
+        (logger, mainWindowCloser, zipper, startupChecker) =
+        (theLogger, windowCloser, theZipper, startupCheck);
         if (startupChecker.CanStart())
         {
-            canStart = true;
-            Message = "Running";
+            state = ModelState.CanStart;
         }
-        else
-        {
-            Message = "Cannot start";
-        }
+        UpdateState();
     }
 
     [RelayCommand]
@@ -52,10 +51,10 @@ public partial class MainWindowViewModel : ObservableRecipient
     [RelayCommand]
     public async void ExportAllLogs()
     {
-        Message = canStart switch
+        state = startupChecker.CanStart() switch
         {
-            true => "Running",
-            false => "Cannot Start",
+            true => ModelState.CanStart,
+            false => ModelState.CannotStart,
         };
 
         var result = await Messenger.Send<SaveExportToPathRequestMessage>();
@@ -67,10 +66,49 @@ public partial class MainWindowViewModel : ObservableRecipient
         var successful = zipper.ZipIt(result.Path);
         if (!successful)
         {
-            Message = "Data export failed";
+            state = ModelState.ZipFailed;
+            UpdateState();
         }
     }
 
     [ObservableProperty]
     private string? message;
+
+    [ObservableProperty]
+    private Color backgroundColor;
+
+    private void UpdateState()
+    {
+        SetMessage();
+        SetBackgroundColor();
+    }
+
+    private void SetMessage()
+    {
+        Message = state switch
+        {
+            ModelState.CannotStart => "Cannot Start",
+            ModelState.ZipFailed => "Zip Failed",
+            ModelState.CanStart => "Running",
+            _ => "Unknown",
+        };
+    }
+
+    private void SetBackgroundColor()
+    {
+        BackgroundColor = state switch
+        {
+            ModelState.CannotStart => Colors.Red,
+            ModelState.ZipFailed => Colors.Yellow,
+            ModelState.CanStart => Colors.LightGreen,
+            _ => Colors.White,
+        };
+    }
+
+    private enum ModelState
+    {
+        CannotStart,
+        ZipFailed,
+        CanStart,
+    }
 }

@@ -36,7 +36,10 @@
     <!--Right Main Content area, last child
         so takes all the remaining room -->
     <StackPanel Width="Auto" Height="Auto">
-      <TextBlock FontSize="18" Text="{Binding Message}" />
+      <StackPanel.Background>
+        <SolidColorBrush Color="{Binding BackgroundColor}" />
+      </StackPanel.Background>
+      <TextBlock FontSize="18" Text="{Binding Message}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </StackPanel>
   </DockPanel>
 </Window>

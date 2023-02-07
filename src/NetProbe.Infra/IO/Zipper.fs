@@ -1,6 +1,5 @@
 namespace NetProbe.Infra.IO
 
-
 open Microsoft.Extensions.Logging
 open NetProbe.Core.Interfaces
 
