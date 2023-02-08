@@ -16,10 +16,6 @@ public static class ServicesExtension
         return services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true))
                 .AddSingleton<NotifyIconViewModel>()
                 .AddSingleton<IMainWindowOpenAndCloser>(s => s.GetService<NotifyIconViewModel>()!)
-                .AddSingleton(new RegistryConfiguration{
-                                  Key = "not existing key",
-                                  ValueName = "not existing value",
-                                  FallbackPath = "C:/tmp/netprobeconfig.xml",})
                 .AddSingleton<IRegistryReader, RegistryReader>()
                 .AddSingleton<IProbeConfigurationProvider, RegistryConfigurationProvider>()
                 .AddSingleton<IAvailabilityService, AvailabilityService>()

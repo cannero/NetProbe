@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Configuration;
-using System.IO;
 using System.Threading;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -37,7 +35,8 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
             appAlreadyRunning = false;
         }
 
-        SetupSerilog();
+        AppSettingsExtension.SetupSerilog(appAlreadyRunning, logpath);
+        WriteStart();
 
         this.DispatcherUnhandledException += App_DispatcherUnhandledException;
 
@@ -48,19 +47,8 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         }
     }
 
-    private void SetupSerilog()
+    private void WriteStart()
     {
-        var logfileName = appAlreadyRunning switch
-        {
-            false => "NetProbe.log",
-            true => "NetProbeAlreadyRunning.log",
-        };
-
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .WriteTo.Console()
-            .WriteTo.File($"{logpath}{logfileName}", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
 #if DEBUG
         Log.Information("==============Starting Debug==============");
 #else
@@ -107,24 +95,12 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
     private void SetupIoc()
     {
-        var configuration = BuildConfiguration();
-
         Ioc.Default.ConfigureServices(
             new ServiceCollection()
+                .AddConfiguration()
                 .AddNetProbe(logpath)
                 .BuildServiceProvider(validateScopes: true));
     }
-
-    private IConfiguration BuildConfiguration()
-    {
-        var startpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly()?.Location) ?? "./";
-
-        var builder = new ConfigurationBuilder()
-         .SetBasePath(startpath)
-         .AddJsonFile("configuration/appsettings.json", optional: false, reloadOnChange: true);
-
-        return builder.Build();
-     }
 
     private bool EverythingOkStartingProbes()
     {
