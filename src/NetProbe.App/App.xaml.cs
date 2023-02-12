@@ -36,14 +36,21 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         }
 
         AppSettingsExtension.SetupSerilog(appAlreadyRunning, logpath);
+        this.DispatcherUnhandledException += App_DispatcherUnhandledException;
         WriteStart();
 
-        this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+        SetupIoc();
 
+        var piper = Ioc.Default.GetRequiredService<IPiper>();
         if (appAlreadyRunning)
         {
+            piper.SendAlreadyRunning();
             Log.Information("app already running, exiting");
             Environment.Exit(0);
+        }
+        else
+        {
+            piper.Start(() => ShowNotification("Already running, find it in the taskbar"));
         }
     }
 
@@ -72,8 +79,6 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         base.OnStartup(e);
 
-        SetupIoc();
-
         WeakReferenceMessenger.Default.Register<OpenWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<HideWindowMessage>(this);
         WeakReferenceMessenger.Default.Register<ExitAppMessage>(this);
@@ -85,9 +90,7 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         if (EverythingOkStartingProbes())
         {
-            notifyIcon.ShowNotification("NetProbe", "The appliation is running in the background",
-                NotificationIcon.None, customIcon: null, largeIcon: false, sound: false,
-                respectQuietTime: false, realtime: false, TimeSpan.FromSeconds(4));
+            ShowNotification("The appliation is running in the background");
         }
         // only open in case of error
         OpenMainWindow();
@@ -119,9 +122,21 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
         else
         {
             Log.Fatal("startup not possible");
-            //MessageBox.Show("Cannot start", "Fatal", MessageBoxButton.OK, MessageBoxImage.Error);
             return false;
         }
+    }
+
+    private void ShowNotification(string message)
+    {
+        if (notifyIcon == null)
+        {
+            // when already running message is received during app startup
+            return;
+        }
+
+        notifyIcon.ShowNotification("NetProbe", message,
+                NotificationIcon.None, customIcon: null, largeIcon: false, sound: false,
+                respectQuietTime: false, realtime: true, TimeSpan.FromSeconds(2));
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -142,6 +157,9 @@ public partial class App : Application, IRecipient<OpenWindowMessage>,
 
         var availService = Ioc.Default.GetRequiredService<IAvailabilityService>();
         availService.Stop();
+
+        var piper = Ioc.Default.GetRequiredService<IPiper>();
+        piper.Stop();
     }
 
     private void OpenMainWindow()

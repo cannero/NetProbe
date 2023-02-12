@@ -9,6 +9,7 @@
     <Compile Include="ValueObjects/HostAndPort.fs" />
     <Compile Include="ValueObjects/RegistryConfiguration.fs" />
     <Compile Include="ValueObjects/ProbeConfiguration.fs" />
+    <Compile Include="Interfaces/IPiper.fs" />
     <Compile Include="Interfaces/IZipper.fs" />
     <Compile Include="Interfaces/IProbe.fs" />
     <Compile Include="Interfaces/IProbeConfigurationProvider.fs" />

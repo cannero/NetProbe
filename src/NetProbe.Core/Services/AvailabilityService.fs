@@ -21,7 +21,7 @@ module looping =
 
 type AvailabilityService
     (
-        logger: ILogger<AvailabilityService>,
+        _logger: ILogger<AvailabilityService>,
         configProvider : IProbeConfigurationProvider
     ) =
     let mutable cts = None
@@ -37,7 +37,9 @@ type AvailabilityService
     member _.stop () =
         match cts with
         | None -> ()
-        | Some(token) -> token.Cancel()
+        | Some(token) ->
+            token.Cancel()
+            token.Dispose()
         cts <- None
     
     interface IAvailabilityService with

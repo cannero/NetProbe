@@ -38,8 +38,6 @@ public static class AppSettingsExtension
             var config = CreateConfig();
 
             Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .WriteTo.Console()
             .ReadFrom.Configuration(config)
             .CreateLogger();
 

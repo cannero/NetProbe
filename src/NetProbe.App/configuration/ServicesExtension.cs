@@ -22,6 +22,7 @@ public static class ServicesExtension
                 .AddSingleton<IProbe, PingProbe>()
                 .AddSingleton<IProbe, MySqlConnectionProbe>()
                 .AddTransient<IStartupChecker, StartupChecker>()
+                .AddTransient<IPiper, Piper>()
                 .AddTransient<IZipper>(p => new Zipper(p.GetService<ILogger<Zipper>>(), logpath))
                 //.AddTransient<IZipper, FailingZipper>()
                 .AddTransient<MainWindowViewModel>();

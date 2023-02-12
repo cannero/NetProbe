@@ -17,9 +17,9 @@ public partial class NotifyIconViewModel : ObservableRecipient, IMainWindowOpenA
 {
     private readonly ILogger<NotifyIconViewModel> logger;
 
-    public NotifyIconViewModel()
+    public NotifyIconViewModel(ILogger<NotifyIconViewModel> thelogger)
     {
-        logger = Ioc.Default.GetRequiredService<ILogger<NotifyIconViewModel>>();
+        logger = thelogger;
     }
 
     [ObservableProperty]

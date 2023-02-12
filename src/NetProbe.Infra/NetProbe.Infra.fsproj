@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Dummys/FailingZipper.fs" />
+    <Compile Include="IO/Piper.fs" />
     <Compile Include="IO/Zipper.fs" />
     <Compile Include="IO/RegistryConfigurationProvider.fs" />
     <Compile Include="IO/MySqlConnectionProbe.fs" />
